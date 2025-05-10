@@ -1,0 +1,30 @@
+TODO
+
+each charater is made of two parts, text and subscript.
+these two parts are stored sepretly and conbined when rendering.
+
+Rules:
+1. all text most be unique in every rotations
+2. all text must be capitable of holding subscript.
+3. all text must be composed of straght lines.
+4. all subscript must be composed of curved shapes.
+
+charater encoding:
+each charater can be repecented in 8 or 16 bits. 
+
+the first bit of every char, starting left to right,
+is a flage for how many bits this charater will use.
+
+0 = 8 bits.
+1 = 16 bits.
+
+case 8:
+
+next two bits code how many times to rotation the text.
+next two bits code the subscript: see table 1.
+
+
+case 16:
+
+next two bits code how many times to rotation the text.
+

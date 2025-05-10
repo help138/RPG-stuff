@@ -1,6 +1,3 @@
-//may be probmatic. 
-#pragma once 
-
 
 #ifndef MANUAL_OVERRIDE
   // TODO check
@@ -35,8 +32,6 @@
   #define ASCII_VAL_CLOSECURLYBRACE
   #define ASCII_VAL_
 
-  
-
 
   enum ASCII_VAL{
     NULL_CHAR = 0, SOH, STX, ETX, EOT, ENQ, ACK, BEL, BACKSPACE, TAB, LF, VT, FF, CR, SO, SI, 
@@ -46,7 +41,7 @@
     a = 97, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z,
   };
 
-  // TODO
+  // TODO build the libary it self
 
   typedef struct {
     unsigned int len; //number of elements
@@ -54,6 +49,7 @@
     void* mem; //the arr itself
   } boundArr;
 
+  void fillarrRand(int* arr, int len);
   int checkbound(boundArr arr, unsigned int index){
     if(arr.len <= index) return 1;
     return 0;
