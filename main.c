@@ -3,7 +3,8 @@
 
 #define SDL_MAIN_USE_CALLBACKS 1
 #include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h> 
+// #include <math.h>
 #include "inc/SDL.h"
 #include "inc/SDL_main.h"
 
@@ -14,18 +15,25 @@ int wind_width = DEFAULT_WINDOW_WIDTH;
 int wind_hight = DEFAULT_WINDOW_HIGHT;
 SDL_Window* wind = NULL;
 SDL_Renderer* render = NULL;
+float scale = 1;
+float mouseX;
+float mouseY;
 
-
-void drawCircle(int cx, int cy, int r){
-  double rSqu = SDL_pow(r, 2);
-  for (double x = 0; x < cx+r; x++){
-    for (double y = 0; y < cx+r; y++){
-
+void drawCircle(int cx, int cy, int r){ // crashes when on the edge of the screen
+  float rSqu = SDL_powf((float)r, 2);
+  for (float x = cx-r; x < cx+r; x++){
+    for (float y = cy-r; y < cy+r; y++){
+      float dis = SDL_powf(x-cx, 2) + SDL_powf(y-cy, 2); 
+      if(dis < rSqu){
+        SDL_RenderPoint(render, x, y);
+      }
     }
   }
-  
 }
 void draw(){
+  
+
+
   size_t count;
   const double c1 = SDL_PI_D*2/3;
   const double c2 = SDL_PI_D*4/3;
@@ -35,19 +43,21 @@ void draw(){
   const float b = (float)(0.5 + 0.5 * SDL_sin(now + c1));
   const float g = (float)(0.5 + 0.5 * SDL_sin(now + c2));
   SDL_SetRenderDrawColorFloat(render, r, g, b, SDL_ALPHA_OPAQUE_FLOAT);  
-  SDL_RenderClear(render);
+  
+  drawCircle(mouseX, mouseY, 10);
+  drawCircle((float)wind_width/4, (float)wind_hight/4, 10*scale);
 
 }
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]){
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-  SDL_CreateWindowAndRenderer("callback demo", wind_width, wind_hight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OCCLUDED | SDL_WINDOW_MAXIMIZED /*| SDL_WINDOW_MOUSE_GRABBED | SDL_WINDOW_FULLSCREEN*/, &wind, &render);
+  SDL_CreateWindowAndRenderer("callback demo", wind_width, wind_hight, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OCCLUDED /*| SDL_WINDOW_MAXIMIZED | SDL_WINDOW_MOUSE_GRABBED | SDL_WINDOW_FULLSCREEN*/, &wind, &render);
 
   if (wind == NULL){
     printf("Failed to created window: %s\n", SDL_GetError());
     return SDL_APP_FAILURE;
   }
-  if (wind == NULL){
-    printf("Failed to created window: %s\n", SDL_GetError());
+  if (render == NULL){
+    printf("Failed to created render: %s\n", SDL_GetError());
     return SDL_APP_FAILURE;
   }
 
@@ -59,7 +69,26 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event){
     case SDL_EVENT_QUIT: 
         return SDL_APP_SUCCESS;
     case SDL_EVENT_KEY_DOWN:
+      if(event->key.key == SDLK_ESCAPE) return SDL_APP_SUCCESS;
+      break;
+    case SDL_EVENT_WINDOW_RESIZED:
+      wind_width = event->window.data1;
+      wind_hight = event->window.data2;
+        break;
+    case SDL_EVENT_MOUSE_MOTION:
+      // printf("x: %f, y: %f\n", event->motion.x, event->motion.y);
+      mouseX = event->motion.x;
+      mouseY = event->motion.y;
+      break;
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
+      if(event->button.button == 2) {
 
+      }
+      // printf("%d, %d\n", event->button.clicks, event->button.button);
+        break;
+    case SDL_EVENT_MOUSE_WHEEL:
+      scale += event->wheel.y;
+        break; 
     default: 
         break;
   }
@@ -69,6 +98,9 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event){
 
 SDL_AppResult SDL_AppIterate(void *appstate){
 
+  SDL_SetRenderDrawColor(render, 0, 0, 0, SDL_ALPHA_OPAQUE);  
+  SDL_RenderClear(render);
+  
   draw();
 
   SDL_RenderPresent(render); 
