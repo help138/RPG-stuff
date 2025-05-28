@@ -1,5 +1,6 @@
 
-#ifndef MANUAL_OVERRIDE
+#ifndef ASCII_VAL_h
+  #define ASCII_VAL_h
   // TODO check
   #define ASCII_VAL_TAB 0x9
   #define ASCII_VAL_AND 0x26
@@ -30,7 +31,6 @@
   #define ASCII_VAL_BACKTICK 0x60
   #define ASCII_VAL_OPENCURLYBRACE
   #define ASCII_VAL_CLOSECURLYBRACE
-  #define ASCII_VAL_
 
 
   enum ASCII_VAL{
@@ -70,5 +70,3 @@ int charToNum(char ch){
     return 0;
   }
 #endif
-
-#define MANUAL_OVERRIDE 1
